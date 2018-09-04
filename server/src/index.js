@@ -30,19 +30,24 @@ let users = {
     }
 }
 
-const me = users[1]
-
 const resolvers = {
     Query: {
         users: () => Object.values(users),
         user: (parent, { id }) => users[id],
-        me: () => me,
+        me: (parent, args, { me }) => me,
+    },
+
+    User: {
+        username: user => user.username
     }
 }
 
 const server = new ApolloServer({
     typeDefs: schema,
-    resolvers
+    resolvers,
+    context: {
+        me: users[1]
+    }
 })
 
 server.applyMiddleware({ app, path: '/graphql' })
